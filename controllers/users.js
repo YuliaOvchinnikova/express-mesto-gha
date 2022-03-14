@@ -58,8 +58,8 @@ module.exports.updateUser = (req, res) => {
 
   User.findByIdAndUpdate(
     req.user._id,
-    { name: name, about: about },
-    { new: true, runValidators: true }
+    { name, about },
+    { new: true, runValidators: true },
   )
     .orFail(() => {
       throw new ErrorNotFound(`Пользователь с id ${req.params.id} не найден.`);
@@ -93,8 +93,8 @@ module.exports.updateUserAvatar = (req, res) => {
 
   User.findByIdAndUpdate(
     req.user._id,
-    { avatar: avatar },
-    { new: true, runValidators: true }
+    { avatar },
+    { new: true, runValidators: true },
   )
     .orFail(() => {
       throw new ErrorNotFound(`Пользователь с id ${req.params.id} не найден.`);
