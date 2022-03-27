@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const { PORT = 3000 } = process.env;
 const app = express();
 const mongoose = require("mongoose");
+require("dotenv").config();
+
 const { errors } = require("celebrate");
 const { celebrate, Joi } = require("celebrate");
 const errorHandler = require("./middlewares/errorHandler");
