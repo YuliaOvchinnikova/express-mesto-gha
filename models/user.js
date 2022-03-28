@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     role: { type: String, default: "https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png" },
     validate: {
       validator(url) {
-        return isURL(url, { protocols: ["http", "https"] });
+        return isURL(url, { protocols: ["http", "https"], require_protocol: true });
       },
       message: (props) => `${props.value} не валидная ссылка.`,
     },
@@ -37,11 +37,11 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
     select: false,
   },
 });
 
+// eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select("+password")
     .then((user) => {

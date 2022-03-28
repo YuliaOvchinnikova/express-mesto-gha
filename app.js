@@ -1,13 +1,16 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const { isURL } = require("validator");
 
 const { PORT = 3000 } = process.env;
 const app = express();
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const { errors } = require("celebrate");
 const { celebrate, Joi } = require("celebrate");
+const ErrorNotFound = require("./errors/ErrorNotFound");
 const errorHandler = require("./middlewares/errorHandler");
 
 const { login, createUser } = require("./controllers/users");
@@ -18,30 +21,35 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/signin", celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required(),
+    email: Joi.string().email().required(),
     password: Joi.string().required().min(8),
   }),
 }), login);
 
 app.post("/signup", celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required(),
-    email: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().custom((url, helper) => {
+      if (!isURL(url, { protocols: ["http", "https"], require_protocol: true })) {
+        return helper.message(`${url} не валидная ссылка.`);
+      }
+      return true;
+    }),
+    email: Joi.string().email().required(),
     password: Joi.string().required().min(8),
 
   }),
 }), createUser);
 
+app.use(cookieParser());
 app.use(auth);
 
 app.use("/users", require("./routes/users"));
 app.use("/cards", require("./routes/cards"));
 
-app.use((req, res, next) => {
-  res.status(404).send({ message: "Страница не найдена!" });
-  next();
+app.use(() => {
+  throw new ErrorNotFound("Страница не найдена!");
 });
 
 app.use(errors());

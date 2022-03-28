@@ -1,23 +1,24 @@
 const jwt = require("jsonwebtoken");
-const ErrorForbidden = require("../errors/ErrorForbidden");
+
+const { NODE_ENV, JWT_SECRET } = process.env;
+
+const ErrorUnauthorized = require("../errors/ErrorUnauthorized");
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-
-  if (!authorization || !authorization.startsWith("Bearer ")) {
-    next(new ErrorForbidden());
+  if (!req.cookies.jwt) {
+    next(new ErrorUnauthorized());
     return;
   }
 
-  const token = authorization.replace("Bearer ", "");
+  const token = req.cookies.jwt;
   let payload;
 
   try {
     // попытаемся верифицировать токен
-    payload = jwt.verify(token, "some-secret-key");
+    payload = jwt.verify(token, NODE_ENV === "production" ? JWT_SECRET : "dev-secret");
   } catch (err) {
     // отправим ошибку, если не получилось
-    next(new ErrorForbidden());
+    next(new ErrorUnauthorized());
     return;
   }
 
