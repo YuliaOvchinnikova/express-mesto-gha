@@ -8,19 +8,19 @@ const userSchema = new mongoose.Schema({
     required: false,
     minlength: 2,
     maxlength: 30,
-    role: { type: String, default: "Жак-Ив Кусто" },
+    default: "Жак-Ив Кусто",
   },
   about: {
     type: String,
     required: false,
     minlength: 2,
     maxlength: 30,
-    role: { type: String, default: "Исследователь" },
+    default: "Исследователь",
   },
   avatar: {
     type: String,
     required: false,
-    role: { type: String, default: "https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png" },
+    default: "https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png",
     validate: {
       validator(url) {
         return isURL(url, { protocols: ["http", "https"], require_protocol: true });

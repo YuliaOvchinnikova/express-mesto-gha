@@ -18,7 +18,7 @@ router.post("/", celebrate({
       if (!isURL(url, { protocols: ["http", "https"], require_protocol: true })) {
         return helper.message(`${url} не валидная ссылка.`);
       }
-      return true;
+      return url;
     }),
 
   }),

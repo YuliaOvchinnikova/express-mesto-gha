@@ -14,7 +14,7 @@ router.get("/", getUsers);
 router.get("/me", getMe);
 router.get("/:id", celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().required().length(24),
+    id: Joi.string().hex().required().length(24),
   }),
 }), getUserById);
 router.patch("/me", celebrate({
@@ -30,7 +30,7 @@ router.patch("/me/avatar", celebrate({
       if (!isURL(url, { protocols: ["http", "https"], require_protocol: true })) {
         return helper.message(`${url} не валидная ссылка.`);
       }
-      return true;
+      return url;
     }),
   }),
 }), updateUserAvatar);
